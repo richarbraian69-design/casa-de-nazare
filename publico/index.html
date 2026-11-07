@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Casa de Nazaré</title>
+<meta name="theme-color" content="#EDB394">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Casa de Nazaré">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/icones/icone-192.png">
+<link rel="apple-touch-icon" href="/icones/icone-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FDF3F2; --card:#FFFFFF; --peach:#EDB394; --peach-2:#F6D3C0; --rose:#F3B5B5; --rose-2:#FBE3E3;
+  --ink:#4A2C25; --ink-2:#8A6A62; --ink-3:#B89C95; --teal:#1F8A8A; --teal-2:#DDF1F0;
+  --ok:#3E9A6B; --ok-2:#E2F3EA; --warn:#D97A2B; --warn-2:#FBE9DA; --late:#C9433F; --late-2:#F9E1E0;
+  --r:22px; --r-s:14px; --shadow:0 6px 18px rgba(74,44,37,.08);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"Nunito",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-weight:700;-webkit-font-smoothing:antialiased}
+body{padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+input,select,textarea{font:inherit;color:inherit}
+h1,h2,h3{margin:0}
+.app{max-width:520px;margin:0 auto;padding:0 16px}
+header.top{padding:calc(18px + env(safe-area-inset-top)) 0 10px;display:flex;align-items:flex-end;justify-content:space-between}
+header.top .date{font-size:13px;color:var(--ink-2);text-transform:capitalize}
+header.top h1{font-size:26px;font-weight:900;letter-spacing:-.4px}
+.gear{width:40px;height:40px;border-radius:14px;background:var(--card);display:grid;place-items:center;box-shadow:var(--shadow)}
+.tab{display:none}.tab.on{display:block}
+.card{background:var(--card);border-radius:var(--r);padding:16px;box-shadow:var(--shadow);margin-bottom:14px;position:relative}
+.card.pink{background:var(--rose-2);box-shadow:none;outline:2px solid var(--rose);outline-offset:-6px;border:2px solid var(--rose)}
+.card.peach{background:linear-gradient(135deg,var(--peach-2),#FBE8DD);box-shadow:none}
+.sec{display:flex;align-items:center;justify-content:space-between;margin:18px 2px 10px}
+.sec h2{font-size:18px;font-weight:900}
+.sec .sub{font-size:12px;color:var(--ink-2)}
+.tag{display:inline-block;background:var(--teal-2);color:var(--teal);font-size:11px;font-weight:900;padding:3px 9px;border-radius:999px;letter-spacing:.3px;text-transform:uppercase}
+.tag.ok{background:var(--ok-2);color:var(--ok)}.tag.warn{background:var(--warn-2);color:var(--warn)}.tag.late{background:var(--late-2);color:var(--late)}.tag.soft{background:var(--rose-2);color:var(--ink-2)}
+.row{display:flex;align-items:center;gap:12px}
+.grow{flex:1;min-width:0}
+.muted{color:var(--ink-2);font-size:13px}
+.small{font-size:12px;color:var(--ink-3)}
+.btn{background:var(--ink);color:#fff;border-radius:999px;padding:12px 20px;font-weight:900;font-size:15px}
+.btn.ghost{background:var(--card);color:var(--ink);box-shadow:var(--shadow)}
+.btn.peach{background:var(--peach);color:var(--ink)}
+.btn.sm{padding:8px 14px;font-size:13px}
+.btn.danger{background:var(--late-2);color:var(--late)}
+.check{width:30px;height:30px;border-radius:10px;border:2.5px solid var(--rose);display:grid;place-items:center;flex:none;background:#fff}
+.check.on{background:var(--ok);border-color:var(--ok)}
+.check svg{width:16px;height:16px;opacity:0}.check.on svg{opacity:1}
+.item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1.5px dashed var(--rose-2)}
+.item:last-child{border-bottom:0}
+.item .t{font-size:15px;font-weight:800}
+.item .t.done{text-decoration:line-through;color:var(--ink-3)}
+.bar{height:6px;border-radius:999px;background:var(--rose-2);overflow:hidden;margin-top:8px}
+.bar i{display:block;height:100%;border-radius:999px;background:var(--teal)}
+.bar i.warn{background:var(--warn)}.bar i.late{background:var(--late)}
+.count{font-size:28px;font-weight:900;line-height:1;letter-spacing:-.5px}
+.count small{font-size:12px;font-weight:800;color:var(--ink-2);display:block;margin-top:2px;letter-spacing:0}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{padding:6px 11px;border-radius:999px;background:var(--rose-2);font-size:12px;font-weight:900;color:var(--ink-2)}
+.chip.on{background:var(--ink);color:#fff}
+.chip.teal{background:var(--teal-2);color:var(--teal)}
+.chip.teal.on{background:var(--teal);color:#fff}
+.days{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.day{background:var(--card);border-radius:16px;padding:10px 4px;text-align:center;box-shadow:var(--shadow);border:2px solid transparent}
+.day b{display:block;font-size:17px;font-weight:900}
+.day span{font-size:10px;color:var(--ink-2);text-transform:uppercase;font-weight:900}
+.day em{display:block;font-style:normal;font-size:10px;margin-top:4px;color:var(--teal);font-weight:900}
+.day.today{border-color:var(--peach)}
+.day.sel{background:var(--ink);color:#fff}.day.sel span,.day.sel em{color:#F6D3C0}
+.hero{display:flex;gap:14px;align-items:center}
+.hero .ring{width:84px;height:84px;flex:none;position:relative}
+.hero .ring svg{width:84px;height:84px;transform:rotate(-90deg)}
+.hero .ring b{position:absolute;inset:0;display:grid;place-items:center;font-size:20px;font-weight:900}
+.hero h2{font-size:19px;font-weight:900;line-height:1.15}
+.hero p{margin:4px 0 0;color:var(--ink-2);font-size:13px}
+.rot{display:flex;gap:12px;padding:10px 0;border-bottom:1.5px dashed var(--rose-2)}
+.rot:last-child{border-bottom:0}
+.rot .h{width:52px;flex:none;font-weight:900;color:var(--teal);font-size:14px;padding-top:2px}
+.rot .t{font-weight:800;font-size:15px}
+.rot .q{font-size:12px;color:var(--ink-2)}
+.rot.past{opacity:.45}
+.rot.now .h{color:var(--late)}
+.rot.now .t::after{content:"agora";margin-left:8px;font-size:10px;background:var(--late-2);color:var(--late);padding:2px 8px;border-radius:999px;font-weight:900;text-transform:uppercase}
+.empty{text-align:center;color:var(--ink-3);padding:22px 10px;font-size:14px}
+.quote{font-style:italic;font-weight:600;font-size:14px;line-height:1.45}
+.quote b{display:block;font-style:normal;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--ink-2);margin-top:8px;font-weight:900}
+.fab{position:fixed;right:max(16px,calc(50% - 244px));bottom:calc(92px + env(safe-area-inset-bottom));width:56px;height:56px;border-radius:20px;background:var(--peach);color:var(--ink);display:grid;place-items:center;box-shadow:0 10px 24px rgba(237,179,148,.6);font-size:30px;font-weight:900;z-index:5}
+nav{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.96);backdrop-filter:blur(10px);border-top:1.5px solid var(--rose-2);padding:8px 10px calc(8px + env(safe-area-inset-bottom));z-index:6}
+nav .in{max-width:520px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr)}
+nav button{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10.5px;font-weight:900;color:var(--ink-3);padding:6px 0;border-radius:14px}
+nav button svg{width:24px;height:24px}
+nav button.on{color:var(--ink)}
+nav button.on svg{color:var(--teal)}
+/* sheet */
+.veil{position:fixed;inset:0;background:rgba(74,44,37,.35);display:none;z-index:20}
+.veil.on{display:block}
+.sheet{position:fixed;left:0;right:0;bottom:0;background:var(--bg);border-radius:26px 26px 0 0;padding:14px 18px calc(22px + env(safe-area-inset-bottom));max-height:88vh;overflow:auto;transform:translateY(100%);transition:transform .25s;z-index:21}
+.sheet.on{transform:translateY(0)}
+.sheet .in{max-width:520px;margin:0 auto}
+.sheet .grab{width:44px;height:5px;background:var(--rose);border-radius:999px;margin:0 auto 12px}
+.sheet h3{font-size:20px;font-weight:900;margin-bottom:12px}
+.f{margin-bottom:12px}
+.f label{display:block;font-size:12px;font-weight:900;color:var(--ink-2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px}
+.f input,.f select,.f textarea{width:100%;border:2px solid var(--rose-2);background:#fff;border-radius:14px;padding:12px 14px;font-weight:800;font-size:16px;outline:none}
+.f input:focus,.f select:focus{border-color:var(--peach)}
+.f .inl{display:flex;gap:10px}
+.f .inl > *{flex:1}
+.wk{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.wk button{padding:9px 0;border-radius:12px;background:#fff;border:2px solid var(--rose-2);font-weight:900;font-size:12px}
+.wk button.on{background:var(--teal);border-color:var(--teal);color:#fff}
+.acts{display:flex;gap:10px;margin-top:6px}
+.acts .btn{flex:1}
+.mini{font-size:12px;font-weight:900;color:var(--teal);padding:6px 10px;border-radius:999px;background:var(--teal-2)}
+.mini.off{background:var(--rose-2);color:var(--ink-3)}
+.stat{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.stat div{background:var(--card);border-radius:16px;padding:12px 8px;text-align:center;box-shadow:var(--shadow)}
+.stat b{display:block;font-size:22px;font-weight:900}
+.stat span{font-size:10.5px;color:var(--ink-2);font-weight:900;text-transform:uppercase}
+.ppl{display:flex;flex-wrap:wrap;gap:8px}
+.ppl .p{display:flex;align-items:center;gap:6px;background:#fff;border-radius:999px;padding:6px 6px 6px 12px;box-shadow:var(--shadow);font-weight:900;font-size:13px}
+.ppl .p button{width:22px;height:22px;border-radius:50%;background:var(--rose-2);color:var(--late);font-size:12px}
+.toast{position:fixed;left:50%;bottom:calc(100px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:10px 18px;border-radius:999px;font-size:13px;font-weight:900;opacity:0;transition:.25s;z-index:30;pointer-events:none;white-space:nowrap}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div>
+      <div class="date" id="hdrDate"></div>
+      <h1 id="hdrTitle">Casa de Nazaré</h1>
+    </div>
+    <button class="gear" onclick="openConfig()" aria-label="Ajustes">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+    </button>
+  </header>
+
+  <!-- HOJE -->
+  <section class="tab on" id="tab-hoje"></section>
+  <!-- SEMANA -->
+  <section class="tab" id="tab-semana"></section>
+  <!-- CASA -->
+  <section class="tab" id="tab-casa"></section>
+  <!-- ROTINA -->
+  <section class="tab" id="tab-rotina"></section>
+</div>
+
+<button class="fab" id="fab" onclick="fabClick()">+</button>
+
+<nav><div class="in">
+  <button class="on" data-tab="hoje" onclick="go('hoje')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>Hoje</button>
+  <button data-tab="semana" onclick="go('semana')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Semana</button>
+  <button data-tab="casa" onclick="go('casa')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg>Casa</button>
+  <button data-tab="rotina" onclick="go('rotina')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Rotina</button>
+</div></nav>
+
+<div class="veil" id="veil" onclick="closeSheet()"></div>
+<div class="sheet" id="sheet"><div class="in" id="sheetIn"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* =============== DADOS =============== */
+const KEY='casa-de-nazare-v1';
+const DIAS=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+const DIAS_L=['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado'];
+const MESES=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+const AREAS=['Cozinha','Sala','Quartos','Banheiros','Roupas','Área de serviço','Geral'];
+
+const CITACOES=[
+  ['Faze tudo por amor. Assim não há coisas pequenas: tudo é grande.','São Josemaria Escrivá'],
+  ['Nada de ansiedade. Tudo com calma e com ordem.','São Francisco de Sales'],
+  ['Não deixeis para amanhã o que podeis fazer hoje.','São João Bosco'],
+  ['Deus habita entre as panelas.','Santa Teresa de Ávila'],
+  ['O que importa não é o tamanho da obra, mas o amor com que é feita.','Santa Teresinha'],
+  ['Ora et labora.','São Bento'],
+  ['A paz da casa começa na paz do coração.','Santa Zélia Martin'],
+];
+
+function seed(){
+  const hoje=iso(new Date());
+  return {
+    nome:'Casa de Nazaré',
+    pessoas:['Isabel','Richar','Ester','Francisco'],
+    tarefas:[
+      t('Trocar roupa de cama',7,'Quartos',-5),
+      t('Limpar banheiros',7,'Banheiros',-6),
+      t('Limpar geladeira',15,'Cozinha',-9),
+      t('Organizar armário das crianças',15,'Quartos',-2),
+      t('Lavar tapetes',30,'Sala',-28),
+      t('Limpar ventiladores',30,'Geral',-33),
+      t('Trocar filtro de água',90,'Cozinha',-40),
+      t('Lavar cortinas',90,'Sala',-100),
+      t('Revisar caixa de remédios',60,'Geral',-20),
+    ],
+    criancas:'Ester e Francisco',
+    rotina:[
+      r('07:00','Acordar (entre 7h e 8h), tirar o pijama e oração','Ester e Francisco'),
+      r('08:00','Café da manhã','Família'),
+      r('08:30','Brincar ao ar livre, gastar energia','Ester e Francisco'),
+      r('09:30','Comer fruta','Ester e Francisco'),
+      r('10:30','Leitura ou música, acalmar','Ester e Francisco'),
+      r('12:00','Almoço','Família'),
+      r('13:00','Escovar os dentes e soneca','Ester e Francisco'),
+      r('15:30','Acordar da soneca (no máximo 15:30)','Ester e Francisco'),
+      r('16:00','Fruta','Ester e Francisco'),
+      r('16:30','Brincadeiras que estimulem o aprendizado ou material separado','Ester e Francisco'),
+      r('18:00','Jantar','Família'),
+      r('19:00','Banho e sono','Ester e Francisco'),
+    ],
+    historico:[]
+  };
+  function t(nome,intervalo,area,dias){return {id:uid(),nome,area,intervalo,ultimaVez:addDays(hoje,dias),quem:'',semana:null,dia:null,feitoHoje:null}}
+  function r(hora,titulo,quem,dias){return {id:uid(),hora,titulo,quem,dias:dias||[0,1,2,3,4,5,6]}}
+}
+let S=load();
+function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&s.tarefas)return s}catch(e){}const s=seed();save(s);return s}
+function save(s){localStorage.setItem(KEY,JSON.stringify(s||S))}
+function uid(){return Math.random().toString(36).slice(2,9)}
+
+/* =============== DATAS =============== */
+function iso(d){const z=new Date(d);z.setMinutes(z.getMinutes()-z.getTimezoneOffset());return z.toISOString().slice(0,10)}
+function fromIso(s){const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)}
+function addDays(s,n){const d=fromIso(s);d.setDate(d.getDate()+n);return iso(d)}
+function diffDays(a,b){return Math.round((fromIso(a)-fromIso(b))/864e5)}
+const HOJE=()=>iso(new Date());
+function weekStart(s){const d=fromIso(s);const wd=(d.getDay()+6)%7;d.setDate(d.getDate()-wd);return iso(d)} // segunda
+function fmtCurta(s){const d=fromIso(s);return `${DIAS[d.getDay()]} ${d.getDate()}`}
+
+/* =============== REGRAS =============== */
+function proxima(t){return t.ultimaVez?addDays(t.ultimaVez,t.intervalo):HOJE()}
+function status(t){
+  const hoje=HOJE(), p=proxima(t), d=diffDays(p,hoje);
+  if(t.feitoHoje===hoje) return {k:'ok',txt:'feita hoje',d};
+  if(d<0) return {k:'late',txt:`atrasada há ${-d} dia${-d>1?'s':''}`,d};
+  if(d===0) return {k:'warn',txt:'vence hoje',d};
+  if(d<=2) return {k:'warn',txt:`faltam ${d} dia${d>1?'s':''}`,d};
+  return {k:'ok',txt:`faltam ${d} dias`,d};
+}
+function progresso(t){ // fração do intervalo já passada
+  if(!t.ultimaVez) return 1;
+  const p=diffDays(HOJE(),t.ultimaVez)/t.intervalo; return Math.max(0,Math.min(1,p));
+}
+function naSemana(t){return t.semana===weekStart(HOJE())}
+function deHoje(t){const h=HOJE();return t.dia===h || (status(t).d<=0 && t.feitoHoje!==h)}
+function concluir(t){
+  const h=HOJE();
+  t.ultimaVez=h; t.feitoHoje=h; t.dia=null; t.semana=null;
+  S.historico.unshift({id:t.id,nome:t.nome,data:h});
+  if(S.historico.length>300)S.historico.length=300;
+  save(); render(); toast('Feito. Próxima vez em '+t.intervalo+' dias.');
+}
+function desfazer(t){
+  const i=S.historico.findIndex(x=>x.id===t.id);
+  if(i>-1)S.historico.splice(i,1);
+  const ant=S.historico.find(x=>x.id===t.id);
+  t.ultimaVez=ant?ant.data:null; t.feitoHoje=null; save(); render();
+}
+
+/* =============== NAVEGAÇÃO =============== */
+let TAB='hoje', SEMANA_DIA=HOJE(), ROT_DIA=new Date().getDay();
+function go(t){TAB=t;document.querySelectorAll('.tab').forEach(e=>e.classList.toggle('on',e.id==='tab-'+t));document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.tab===t));window.scrollTo(0,0);render()}
+function fabClick(){ if(TAB==='rotina') editRotina(); else editTarefa(); }
+
+/* =============== RENDER =============== */
+function render(){
+  const d=new Date();
+  document.getElementById('hdrDate').textContent=`${DIAS_L[d.getDay()]}, ${d.getDate()} de ${MESES[d.getMonth()]}`;
+  document.getElementById('hdrTitle').textContent=S.nome||'Casa de Nazaré';
+  renderHoje(); renderSemana(); renderCasa(); renderRotina();
+}
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const CHECK='<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>';
+
+function itemTarefa(t,opts={}){
+  const st=status(t), done=t.feitoHoje===HOJE();
+  const p=Math.round(progresso(t)*100);
+  return `<div class="item">
+    <button class="check ${done?'on':''}" onclick="${done?`desfazer(T('${t.id}'))`:`concluir(T('${t.id}'))`}" aria-label="Concluir">${CHECK}</button>
+    <div class="grow" onclick="editTarefa('${t.id}')">
+      <div class="t ${done?'done':''}">${esc(t.nome)}</div>
+      <div class="small">${esc(t.area)} · a cada ${t.intervalo} dias${t.quem?' · '+esc(t.quem):''}</div>
+      ${opts.bar?`<div class="bar"><i class="${st.k}" style="width:${p}%"></i></div>`:''}
+    </div>
+    <div style="text-align:right;flex:none">
+      <span class="tag ${st.k}">${st.txt}</span>
+      ${opts.semana?`<div style="margin-top:6px"><button class="mini ${naSemana(t)?'':'off'}" onclick="toggleSemana('${t.id}')">${naSemana(t)?'na semana':'+ semana'}</button></div>`:''}
+    </div>
+  </div>`;
+}
+function T(id){return S.tarefas.find(x=>x.id===id)}
+function toggleSemana(id){const t=T(id);t.semana=naSemana(t)?null:weekStart(HOJE());if(!naSemana(t))t.dia=null;save();render()}
+function toggleHoje(id){const t=T(id);const h=HOJE();t.dia=t.dia===h?null:h;if(t.dia){t.semana=weekStart(h)}save();render()}
+
+function renderHoje(){
+  const h=HOJE();
+  const pend=S.tarefas.filter(t=>deHoje(t)&&t.feitoHoje!==h).sort((a,b)=>status(a).d-status(b).d);
+  const feitas=S.tarefas.filter(t=>t.feitoHoje===h);
+  const total=pend.length+feitas.length, pct=total?feitas.length/total:0;
+  const [q,a]=CITACOES[Math.floor(diffDays(h,'2026-01-01'))%CITACOES.length];
+  const rot=rotinaDoDia(new Date().getDay());
+  const agora=new Date().getHours()*60+new Date().getMinutes();
+  const prox=rot.find(r=>mins(r.hora)>=agora-30);
+  const C=2*Math.PI*34;
+  document.getElementById('tab-hoje').innerHTML=`
+    <div class="card peach"><div class="hero">
+      <div class="ring"><svg viewBox="0 0 84 84"><circle cx="42" cy="42" r="34" stroke="#fff" stroke-width="9" fill="none"/><circle cx="42" cy="42" r="34" stroke="var(--teal)" stroke-width="9" fill="none" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C*(1-pct)}"/></svg><b>${feitas.length}/${total}</b></div>
+      <div class="grow">
+        <h2>${total===0?'Nada pendente hoje':pend.length===0?'Tudo em dia!':`${pend.length} tarefa${pend.length>1?'s':''} para hoje`}</h2>
+        <p>${prox?`Agora na rotina: <b>${esc(prox.titulo)}</b> às ${prox.hora}`:'Rotina do dia concluída'}</p>
+      </div>
+    </div></div>
+
+    <div class="sec"><h2>Para hoje</h2><span class="sub">${feitas.length} feita${feitas.length!==1?'s':''}</span></div>
+    <div class="card">
+      ${pend.length?pend.map(t=>itemTarefa(t)).join(''):'<div class="empty">Nenhuma tarefa pendente para hoje.<br>Puxe uma da aba Semana ou toque em + para criar.</div>'}
+      ${feitas.length?feitas.map(t=>itemTarefa(t)).join(''):''}
+    </div>
+
+    <div class="sec"><h2>Rotina de ${esc(S.criancas||"hoje")}</h2><span class="sub" onclick="go('rotina')">ver tudo</span></div>
+    <div class="card">${rot.length?rot.map(r=>rotItem(r,agora)).join(''):'<div class="empty">Sem blocos de rotina para hoje.</div>'}</div>
+
+    <div class="card pink"><div class="quote">“${q}”<b>${a}</b></div></div>`;
+}
+function mins(h){const [a,b]=h.split(':').map(Number);return a*60+b}
+function rotinaDoDia(wd){return S.rotina.filter(r=>r.dias.includes(wd)).sort((a,b)=>mins(a.hora)-mins(b.hora))}
+function rotItem(r,agora){
+  let cls='';
+  if(agora!=null){const m=mins(r.hora);if(m<agora-45)cls='past';else if(m<=agora+15&&m>=agora-45)cls='now'}
+  return `<div class="rot ${cls}" onclick="editRotina('${r.id}')"><div class="h">${r.hora}</div><div class="grow"><div class="t">${esc(r.titulo)}</div><div class="q">${esc(r.quem||'')}${r.dias.length<7?' · '+r.dias.map(d=>DIAS[d]).join(', '):''}</div></div></div>`;
+}
+
+function renderSemana(){
+  const h=HOJE(), ini=weekStart(h);
+  const dias=[...Array(7)].map((_,i)=>addDays(ini,i));
+  const emSemana=S.tarefas.filter(naSemana);
+  const semDia=emSemana.filter(t=>!t.dia);
+  const doDia=S.tarefas.filter(t=>t.dia===SEMANA_DIA);
+  const sugeridas=S.tarefas.filter(t=>!naSemana(t)&&status(t).d<=7&&t.feitoHoje!==h).sort((a,b)=>status(a).d-status(b).d);
+  const wd=fromIso(SEMANA_DIA).getDay();
+  document.getElementById('tab-semana').innerHTML=`
+    <div class="days">${dias.map(d=>{const n=S.tarefas.filter(t=>t.dia===d).length;const dd=fromIso(d);return `<button class="day ${d===h?'today':''} ${d===SEMANA_DIA?'sel':''}" onclick="SEMANA_DIA='${d}';render()"><span>${DIAS[dd.getDay()]}</span><b>${dd.getDate()}</b><em>${n?n+' ✓':'&nbsp;'}</em></button>`}).join('')}</div>
+
+    <div class="sec"><h2>${SEMANA_DIA===h?'Hoje, ':''}${DIAS_L[wd].split('-')[0]} ${fromIso(SEMANA_DIA).getDate()}</h2><span class="sub">${doDia.length} tarefa${doDia.length!==1?'s':''}</span></div>
+    <div class="card">${doDia.length?doDia.map(t=>itemTarefa(t)).join(''):'<div class="empty">Nenhuma tarefa marcada para este dia.<br>Escolha abaixo em qual dia cada tarefa da semana vai ser feita.</div>'}</div>
+
+    <div class="sec"><h2>Selecionadas para a semana</h2><span class="sub">${emSemana.length}</span></div>
+    <div class="card">
+      ${emSemana.length?emSemana.map(t=>`<div class="item" style="flex-wrap:wrap">
+        <div class="grow" onclick="editTarefa('${t.id}')"><div class="t">${esc(t.nome)}</div><div class="small">${status(t).txt}</div></div>
+        <button class="mini off" onclick="toggleSemana('${t.id}')">tirar</button>
+        <div class="chips" style="width:100%;margin-top:8px">${dias.map(d=>`<button class="chip teal ${t.dia===d?'on':''}" onclick="setDia('${t.id}','${d}')">${fmtCurta(d)}</button>`).join('')}</div>
+      </div>`).join(''):'<div class="empty">Nada selecionado ainda. Puxe das sugestões abaixo ou da aba Casa.</div>'}
+    </div>
+
+    <div class="sec"><h2>Sugestões para a semana</h2><span class="sub">vencem em até 7 dias</span></div>
+    <div class="card">${sugeridas.length?sugeridas.map(t=>itemTarefa(t,{semana:true})).join(''):'<div class="empty">Nenhuma tarefa vence nos próximos 7 dias.</div>'}</div>`;
+}
+function setDia(id,d){const t=T(id);t.dia=t.dia===d?null:d;t.semana=weekStart(HOJE());save();render()}
+
+let CASA_AREA='Todas';
+function renderCasa(){
+  const h=HOJE();
+  const lista=S.tarefas.filter(t=>CASA_AREA==='Todas'||t.area===CASA_AREA).sort((a,b)=>status(a).d-status(b).d);
+  const atrasadas=S.tarefas.filter(t=>status(t).k==='late').length;
+  const hoje=S.tarefas.filter(t=>status(t).d===0&&t.feitoHoje!==h).length;
+  const semana=S.tarefas.filter(t=>{const d=status(t).d;return d>0&&d<=7}).length;
+  const areas=['Todas',...AREAS.filter(a=>S.tarefas.some(t=>t.area===a))];
+  document.getElementById('tab-casa').innerHTML=`
+    <div class="stat"><div><b style="color:var(--late)">${atrasadas}</b><span>atrasadas</span></div><div><b style="color:var(--warn)">${hoje}</b><span>vencem hoje</span></div><div><b style="color:var(--teal)">${semana}</b><span>nos 7 dias</span></div></div>
+    <div class="chips" style="margin-bottom:12px">${areas.map(a=>`<button class="chip ${a===CASA_AREA?'on':''}" onclick="CASA_AREA='${a}';render()">${a}</button>`).join('')}</div>
+    <div class="card">${lista.length?lista.map(t=>itemTarefa(t,{bar:true,semana:true})).join(''):'<div class="empty">Nenhuma tarefa nesta área. Toque em + para criar.</div>'}</div>
+    ${S.historico.length?`<div class="sec"><h2>Últimas feitas</h2></div><div class="card">${S.historico.slice(0,8).map(x=>`<div class="item"><div class="grow"><div class="t" style="font-size:14px">${esc(x.nome)}</div></div><span class="small">${fmtCurta(x.data)}</span></div>`).join('')}</div>`:''}`;
+}
+
+function renderRotina(){
+  const rot=rotinaDoDia(ROT_DIA);
+  const hojeWd=new Date().getDay();
+  const agora=ROT_DIA===hojeWd?new Date().getHours()*60+new Date().getMinutes():null;
+  document.getElementById('tab-rotina').innerHTML=`
+    <div class="chips" style="margin-bottom:12px">${[1,2,3,4,5,6,0].map(d=>`<button class="chip ${d===ROT_DIA?'on':''}" onclick="ROT_DIA=${d};render()">${DIAS[d]}</button>`).join('')}</div>
+    <div class="sec"><h2>${esc(S.criancas||'Rotina')} · ${DIAS_L[ROT_DIA].split('-')[0]}</h2><span class="sub">${rot.length} blocos</span></div>
+    <div class="card">${rot.length?rot.map(r=>rotItem(r,agora)).join(''):'<div class="empty">Sem blocos neste dia. Toque em + para adicionar.</div>'}</div>
+    <p class="small" style="text-align:center;padding:0 20px">Toque num bloco para editar o horário, quem participa e em quais dias ele vale.</p>`;
+}
+
+/* =============== SHEETS =============== */
+function openSheet(html){document.getElementById('sheetIn').innerHTML='<div class="grab"></div>'+html;document.getElementById('veil').classList.add('on');document.getElementById('sheet').classList.add('on')}
+function closeSheet(){document.getElementById('veil').classList.remove('on');document.getElementById('sheet').classList.remove('on')}
+
+function editTarefa(id){
+  const t=id?T(id):{nome:'',area:'Geral',intervalo:15,quem:'',ultimaVez:null};
+  const pess=['',...S.pessoas];
+  openSheet(`<h3>${id?'Editar tarefa':'Nova tarefa da casa'}</h3>
+    <div class="f"><label>O que precisa ser feito</label><input id="fNome" value="${esc(t.nome)}" placeholder="Ex.: Limpar geladeira"></div>
+    <div class="f"><div class="inl">
+      <div><label>A cada quantos dias</label><input id="fInt" type="number" min="1" inputmode="numeric" value="${t.intervalo}"></div>
+      <div><label>Área</label><select id="fArea">${AREAS.map(a=>`<option ${a===t.area?'selected':''}>${a}</option>`).join('')}</select></div>
+    </div></div>
+    <div class="f"><div class="inl">
+      <div><label>Responsável</label><select id="fQuem">${pess.map(p=>`<option value="${esc(p)}" ${p===t.quem?'selected':''}>${p||'Qualquer um'}</option>`).join('')}</select></div>
+      <div><label>Última vez feita</label><input id="fUlt" type="date" value="${t.ultimaVez||''}"></div>
+    </div></div>
+    <p class="small">Sem data de última vez, a tarefa já aparece como vencendo hoje.</p>
+    <div class="acts">${id?`<button class="btn danger" onclick="delTarefa('${id}')">Excluir</button>`:''}<button class="btn" onclick="saveTarefa('${id||''}')">Salvar</button></div>`);
+  setTimeout(()=>document.getElementById('fNome').focus(),250);
+}
+function saveTarefa(id){
+  const nome=document.getElementById('fNome').value.trim(); if(!nome)return toast('Dê um nome para a tarefa.');
+  const o={nome,intervalo:Math.max(1,parseInt(document.getElementById('fInt').value)||1),area:document.getElementById('fArea').value,quem:document.getElementById('fQuem').value,ultimaVez:document.getElementById('fUlt').value||null};
+  if(id)Object.assign(T(id),o); else S.tarefas.push({id:uid(),semana:null,dia:null,feitoHoje:null,...o});
+  save();closeSheet();render();
+}
+function delTarefa(id){if(!confirm('Excluir esta tarefa?'))return;S.tarefas=S.tarefas.filter(t=>t.id!==id);save();closeSheet();render()}
+
+function editRotina(id){
+  const r=id?S.rotina.find(x=>x.id===id):{hora:'08:00',titulo:'',quem:'Crianças',dias:[0,1,2,3,4,5,6]};
+  const sel=new Set(r.dias);
+  openSheet(`<h3>${id?'Editar bloco':'Novo bloco da rotina'}</h3>
+    <div class="f"><label>Atividade</label><input id="rTit" value="${esc(r.titulo)}" placeholder="Ex.: Banho"></div>
+    <div class="f"><div class="inl">
+      <div><label>Horário</label><input id="rHora" type="time" value="${r.hora}"></div>
+      <div><label>Quem</label><input id="rQuem" value="${esc(r.quem||'')}" placeholder="Crianças, Família…"></div>
+    </div></div>
+    <div class="f"><label>Em quais dias</label><div class="wk" id="rDias">${[1,2,3,4,5,6,0].map(d=>`<button class="${sel.has(d)?'on':''}" data-d="${d}" onclick="this.classList.toggle('on')">${DIAS[d]}</button>`).join('')}</div></div>
+    <div class="acts">${id?`<button class="btn danger" onclick="delRotina('${id}')">Excluir</button>`:''}<button class="btn" onclick="saveRotina('${id||''}')">Salvar</button></div>`);
+}
+function saveRotina(id){
+  const titulo=document.getElementById('rTit').value.trim(); if(!titulo)return toast('Dê um nome para o bloco.');
+  const dias=[...document.querySelectorAll('#rDias button.on')].map(b=>+b.dataset.d);
+  const o={titulo,hora:document.getElementById('rHora').value||'08:00',quem:document.getElementById('rQuem').value.trim(),dias:dias.length?dias:[0,1,2,3,4,5,6]};
+  if(id)Object.assign(S.rotina.find(x=>x.id===id),o); else S.rotina.push({id:uid(),...o});
+  save();closeSheet();render();
+}
+function delRotina(id){if(!confirm('Excluir este bloco?'))return;S.rotina=S.rotina.filter(r=>r.id!==id);save();closeSheet();render()}
+
+function openConfig(){
+  openSheet(`<h3>Ajustes</h3>
+    <div class="f"><label>Nome da casa</label><input id="cNome" value="${esc(S.nome||'')}" onchange="S.nome=this.value.trim()||'Casa de Nazaré';save();render()"></div>
+    <div class="f"><label>Nome da rotina (crianças)</label><input id="cCri" value="${esc(S.criancas||'')}" onchange="S.criancas=this.value.trim();save();render()"></div>
+    <div class="f"><label>Pessoas da casa</label>
+      <div class="ppl" id="cPpl">${S.pessoas.map((p,i)=>`<span class="p">${esc(p)}<button onclick="S.pessoas.splice(${i},1);save();openConfig()">×</button></span>`).join('')}</div>
+      <div class="inl" style="margin-top:8px"><input id="cNova" placeholder="Nova pessoa"><button class="btn peach sm" style="flex:0" onclick="const v=document.getElementById('cNova').value.trim();if(v){S.pessoas.push(v);save();openConfig()}">Adicionar</button></div>
+    </div>
+    <div class="f"><label>Seus dados</label>
+      <div class="acts"><button class="btn ghost" onclick="exportar()">Exportar</button><button class="btn ghost" onclick="document.getElementById('imp').click()">Importar</button></div>
+      <input id="imp" type="file" accept="application/json" style="display:none" onchange="importar(this.files[0])">
+    </div>
+    <p class="small">Tudo fica salvo neste aparelho. Exporte de vez em quando para ter uma cópia, ou para passar para outro celular.</p>
+    <button class="btn danger sm" style="width:100%;margin-top:6px" onclick="if(confirm('Apagar tudo e voltar ao modelo inicial?')){localStorage.removeItem(KEY);location.reload()}">Recomeçar do zero</button>`);
+}
+function exportar(){const b=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='casa-de-nazare-'+HOJE()+'.json';a.click()}
+function importar(f){if(!f)return;const r=new FileReader();r.onload=()=>{try{const s=JSON.parse(r.result);if(!s.tarefas)throw 0;S=s;save();closeSheet();render();toast('Dados importados.')}catch(e){toast('Arquivo inválido.')}};r.readAsText(f)}
+
+let TT;function toast(m){const e=document.getElementById('toast');e.textContent=m;e.classList.add('on');clearTimeout(TT);TT=setTimeout(()=>e.classList.remove('on'),2200)}
+
+render();
+setInterval(render,60000);
+if('serviceWorker' in navigator && location.protocol==='https:')navigator.serviceWorker.register('/sw.js').catch(()=>{});
+</script>
+</body>
+</html>
