@@ -92,7 +92,7 @@ header.top h1{font-size:26px;font-weight:900;letter-spacing:-.4px}
 .quote b{display:block;font-style:normal;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--ink-2);margin-top:8px;font-weight:900}
 .fab{position:fixed;right:max(16px,calc(50% - 244px));bottom:calc(92px + env(safe-area-inset-bottom));width:56px;height:56px;border-radius:20px;background:var(--peach);color:var(--ink);display:grid;place-items:center;box-shadow:0 10px 24px rgba(237,179,148,.6);font-size:30px;font-weight:900;z-index:5}
 nav{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.96);backdrop-filter:blur(10px);border-top:1.5px solid var(--rose-2);padding:8px 10px calc(8px + env(safe-area-inset-bottom));z-index:6}
-nav .in{max-width:520px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr)}
+nav .in{max-width:520px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr)}
 nav button{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10.5px;font-weight:900;color:var(--ink-3);padding:6px 0;border-radius:14px}
 nav button svg{width:24px;height:24px}
 nav button.on{color:var(--ink)}
@@ -149,6 +149,8 @@ nav button.on svg{color:var(--teal)}
   <section class="tab" id="tab-casa"></section>
   <!-- ROTINA -->
   <section class="tab" id="tab-rotina"></section>
+  <!-- PROJETOS -->
+  <section class="tab" id="tab-projetos"></section>
 </div>
 
 <button class="fab" id="fab" onclick="fabClick()">+</button>
@@ -158,6 +160,7 @@ nav button.on svg{color:var(--teal)}
   <button data-tab="semana" onclick="go('semana')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Semana</button>
   <button data-tab="casa" onclick="go('casa')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg>Casa</button>
   <button data-tab="rotina" onclick="go('rotina')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Rotina</button>
+  <button data-tab="projetos" onclick="go('projetos')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4z"/></svg>Projetos</button>
 </div></nav>
 
 <div class="veil" id="veil" onclick="closeSheet()"></div>
@@ -170,7 +173,137 @@ const KEY='casa-de-nazare-v1';
 const DIAS=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
 const DIAS_L=['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado'];
 const MESES=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
-const AREAS=['Cozinha','Sala','Quartos','Banheiros','Roupas','Área de serviço','Geral'];
+const AREAS=['Cozinha','Sala','Quartos','Banheiros','Roupas','Lavanderia e salão','Despensa','Escritório','Pátio e frente','Geral'];
+const COMODOS=['Frente e calçada','Garagem e entrada','Sala','Corredor interno','Quarto das crianças','Quarto do bebê','Banheiro da suíte','Banheiro social','Cozinha','Despensa','Pátio e laterais','Salão dos fundos','Banheiro dos fundos','Escritório'];
+const MODELO=2;
+function tarefasModelo(){
+  const L=[
+    // [nome, intervalo em dias, área]
+    ['Lavar a louça e limpar pia e fogão',1,'Cozinha'],
+    ['Recolher os brinquedos (quarto, sala e cozinha)',1,'Geral'],
+    ['Varrer a cozinha',1,'Cozinha'],
+    ['Tirar e limpar a mesa',1,'Cozinha'],
+    ['Recolher o lixo da cozinha',1,'Cozinha'],
+    ['Estender e recolher a roupa',1,'Roupas'],
+    ['Lavar uma máquina de roupa',2,'Roupas'],
+    ['Varrer a sala e os quartos',3,'Geral'],
+    ['Esvaziar os lixos dos banheiros',3,'Banheiros'],
+    ['Limpar o banheiro social',7,'Banheiros'],
+    ['Limpar o banheiro da suíte',7,'Banheiros'],
+    ['Limpar o banheiro dos fundos',7,'Banheiros'],
+    ['Passar pano na casa toda',7,'Geral'],
+    ['Trocar a roupa de cama',7,'Quartos'],
+    ['Trocar as toalhas',7,'Roupas'],
+    ['Dobrar e guardar a roupa da semana',7,'Roupas'],
+    ['Tirar o pó dos móveis e do oratório',7,'Sala'],
+    ['Varrer o pátio e a garagem',7,'Pátio e frente'],
+    ['Levar o lixo reciclável',7,'Geral'],
+    ['Limpar a geladeira por dentro',15,'Cozinha'],
+    ['Limpar o micro-ondas e o forno',15,'Cozinha'],
+    ['Limpar os vidros das janelas por dentro',15,'Geral'],
+    ['Lavar os tapetes pequenos',15,'Geral'],
+    ['Arrancar o mato da calçada e do pátio',15,'Pátio e frente'],
+    ['Arrumar a fundo o quarto das crianças (e separar roupas que não servem)',15,'Quartos'],
+    ['Cortar a grama',30,'Pátio e frente'],
+    ['Limpar os vidros por fora e as venezianas',30,'Geral'],
+    ['Lavar o box e esfregar o rejunte dos banheiros',30,'Banheiros'],
+    ['Desengordurar os azulejos da cozinha',30,'Cozinha'],
+    ['Limpar a churrasqueira',30,'Lavanderia e salão'],
+    ['Arrumar a despensa',30,'Despensa'],
+    ['Esfregar o piso externo e o limo do corredor dos fundos',30,'Pátio e frente'],
+    ['Tirar o pó dos lustres e luminárias',30,'Geral'],
+    ['Organizar o escritório',30,'Escritório'],
+    ['Lavar as cortinas',90,'Geral'],
+    ['Limpar as calhas',90,'Pátio e frente'],
+    ['Lavar o beiral e as telhas',90,'Pátio e frente'],
+    ['Limpar o freezer',90,'Lavanderia e salão'],
+    ['Rodar o ciclo de limpeza da máquina de lavar',90,'Lavanderia e salão'],
+    ['Separar brinquedos para doação',90,'Quartos'],
+    ['Revisar remédios e validade dos produtos de limpeza',90,'Geral'],
+    ['Passar óleo ou verniz nas portas e janelas de madeira',180,'Geral'],
+    ['Lavar colchões e estofados',180,'Quartos'],
+    ['Revisar quadro de luz, tomadas e alarme',180,'Geral'],
+    ['Trocar o filtro de água',180,'Cozinha'],
+    ['Retocar a pintura da fachada e do muro',365,'Pátio e frente'],
+    ['Revisar o telhado',365,'Pátio e frente'],
+    ['Limpar e revisar a caixa d\'água',365,'Geral'],
+    ['Fazer a dedetização',365,'Geral'],
+  ];
+  // espalha os vencimentos para não cair tudo no mesmo dia
+  const hoje=iso(new Date()), porInt={};
+  L.forEach(([,i])=>porInt[i]=(porInt[i]||0)+1);
+  const pos={};
+  return L.map(([nome,intervalo,area])=>{
+    const j=pos[intervalo]=(pos[intervalo]||0), n=porInt[intervalo]; pos[intervalo]++;
+    const falta=intervalo<=1?0:Math.round((j+0.5)*intervalo/n);
+    return {id:uid(),nome,area,intervalo,quem:'',ultimaVez:addDays(hoje,falta-intervalo),semana:null,dia:null,feitoHoje:null};
+  });
+}
+function projetosModelo(){
+  const L=[
+    // [nome, cômodo, prioridade de segurança]
+    ['Fechar ou trocar a tampa do quadro de luz','Corredor interno',1],
+    ['Tirar o micro-ondas de cima do freezer e prender os fios','Salão dos fundos',1],
+    ['Guardar anilhas e banco de supino longe das crianças','Salão dos fundos',1],
+    ['Conferir e consertar a tela do painel do berço','Quarto do bebê',1],
+    ['Prender ou tirar a haste do móbile do berço','Quarto do bebê',1],
+    ['Colocar lustre ou plafon (bocal está exposto)','Quarto do bebê',1],
+    ['Recolocar a peça de metal solta da janela','Sala',1],
+    ['Guardar alvejante e produtos químicos no alto','Despensa',1],
+    ['Instalar suporte para enrolar a mangueira','Pátio e laterais',1],
+    ['Tirar o banco velho de madeira com limo','Pátio e laterais',1],
+    ['Tirar o mato entre os blocos da calçada e do corredor da garagem','Frente e calçada'],
+    ['Tapar os buracos do gramado','Frente e calçada'],
+    ['Replantar grama nas partes de terra perto da garagem','Frente e calçada'],
+    ['Recolher galhos e restos do gramado','Frente e calçada'],
+    ['Lixar e pintar a caixa do medidor de luz','Frente e calçada'],
+    ['Retocar a pintura da mureta da garagem','Frente e calçada'],
+    ['Repor a tábua que falta no forro do beiral da frente','Frente e calçada'],
+    ['Lavar o limo das telhas do beiral da frente','Frente e calçada'],
+    ['Resolver a lixeira da frente (transbordando)','Frente e calçada'],
+    ['Esfregar o piso de pedra da garagem','Garagem e entrada'],
+    ['Lavar a parte de baixo do beiral e a viga de madeira','Garagem e entrada'],
+    ['Raspar marcas de fita e retocar a pintura da porta de vidro amarelo','Garagem e entrada'],
+    ['Restaurar o verniz da porta de entrada (lado de dentro)','Garagem e entrada'],
+    ['Limpar as marcas na parede acima da janela','Sala'],
+    ['Esfregar o rejunte do piso','Sala'],
+    ['Organizar as prateleiras de baixo do oratório','Sala'],
+    ['Definir lugar fixo para o carrinho e a bola','Sala'],
+    ['Limpar o pé da porta e o rodapé','Sala'],
+    ['Lixar, massear e pintar a parede','Corredor interno'],
+    ['Montar caixas de brinquedos por tipo','Quarto das crianças'],
+    ['Tirar roupas e coisas de cima da cama e da cômoda','Quarto das crianças'],
+    ['Tratar a rachadura da parede ao lado do berço','Quarto do bebê'],
+    ['Limpar as marcas da parede','Quarto do bebê'],
+    ['Prender o berço direito','Quarto do bebê'],
+    ['Comprar lixeira com tampa','Banheiro da suíte'],
+    ['Tirar as manchas do vidro do box','Banheiro social'],
+    ['Clarear o rejunte dos azulejos','Banheiro social'],
+    ['Trocar a lixeira por uma com tampa','Banheiro social'],
+    ['Esvaziar a mesa (compras e roupas)','Cozinha'],
+    ['Tirar as roupas das cadeiras','Cozinha'],
+    ['Recolher sacolas plásticas e brinquedos do chão','Cozinha'],
+    ['Liberar o topo da geladeira','Cozinha'],
+    ['Primeira limpeza pesada dos azulejos atrás do fogão e da pia','Cozinha'],
+    ['Esvaziar tudo e separar: fica, doação, lixo, conserto','Despensa'],
+    ['Pendurar vassouras e rodos na parede','Despensa'],
+    ['Esvaziar o puxadinho de entulho','Pátio e laterais'],
+    ['Retirar ou reaproveitar o suporte de ferro enferrujado','Pátio e laterais'],
+    ['Tratar a rachadura da parede lateral','Pátio e laterais'],
+    ['Guardar grama sintética, tapetes de EVA, cadeirinhas e cadeira de praia','Pátio e laterais'],
+    ['Capinar e replantar os canteiros de tijolo','Pátio e laterais'],
+    ['Esfregar o limo do piso e do muro do corredor dos fundos','Pátio e laterais'],
+    ['Definir canto fixo para o varal e o cesto de roupa','Salão dos fundos'],
+    ['Esvaziar a churrasqueira (está guardando panelas)','Salão dos fundos'],
+    ['Juntar os equipamentos de treino num canto','Salão dos fundos'],
+    ['Tratar a mancha de umidade da parede','Salão dos fundos'],
+    ['Consertar a base apodrecida do batente da porta','Banheiro dos fundos'],
+    ['Fixar a soleira de madeira solta','Banheiro dos fundos'],
+    ['Esvaziar o sofá (livros, cadeirinha, cabos)','Escritório'],
+    ['Pendurar o quadro de tapeçaria e a cruz','Escritório'],
+  ];
+  return L.map(([nome,comodo,pr])=>({id:uid(),nome,comodo,prioridade:!!pr,feito:null,semana:null,dia:null}));
+}
 
 const CITACOES=[
   ['Faze tudo por amor. Assim não há coisas pequenas: tudo é grande.','São Josemaria Escrivá'],
@@ -187,17 +320,9 @@ function seed(){
   return {
     nome:'Casa de Nazaré',
     pessoas:['Isabel','Richar','Ester','Francisco'],
-    tarefas:[
-      t('Trocar roupa de cama',7,'Quartos',-5),
-      t('Limpar banheiros',7,'Banheiros',-6),
-      t('Limpar geladeira',15,'Cozinha',-9),
-      t('Organizar armário das crianças',15,'Quartos',-2),
-      t('Lavar tapetes',30,'Sala',-28),
-      t('Limpar ventiladores',30,'Geral',-33),
-      t('Trocar filtro de água',90,'Cozinha',-40),
-      t('Lavar cortinas',90,'Sala',-100),
-      t('Revisar caixa de remédios',60,'Geral',-20),
-    ],
+    tarefas:tarefasModelo(),
+    projetos:projetosModelo(),
+    modelo:MODELO,
     criancas:'Ester e Francisco',
     rotina:[
       r('07:00','Acordar (entre 7h e 8h), tirar o pijama e oração','Ester e Francisco'),
@@ -219,7 +344,18 @@ function seed(){
   function r(hora,titulo,quem,dias){return {id:uid(),hora,titulo,quem,dias:dias||[0,1,2,3,4,5,6]}}
 }
 let S=load();
-function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&s.tarefas)return s}catch(e){}const s=seed();save(s);return s}
+function load(){
+  try{const s=JSON.parse(localStorage.getItem(KEY));
+    if(s&&s.tarefas){
+      if(!s.modelo||s.modelo<MODELO){ // troca as tarefas de exemplo pela lista feita a partir das fotos da casa
+        s.tarefas=tarefasModelo(); s.projetos=projetosModelo(); s.historico=[]; s.modelo=MODELO;
+        if(!s.pessoas.includes('Francisco'))s.pessoas.push('Francisco');
+        save(s);
+      }
+      if(!s.projetos)s.projetos=[];
+      return s}
+  }catch(e){}
+  const s=seed();save(s);return s}
 function save(s){localStorage.setItem(KEY,JSON.stringify(s||S))}
 function uid(){return Math.random().toString(36).slice(2,9)}
 
@@ -240,6 +376,7 @@ function status(t){
   if(d<0) return {k:'late',txt:`atrasada há ${-d} dia${-d>1?'s':''}`,d};
   if(d===0) return {k:'warn',txt:'vence hoje',d};
   if(d<=2) return {k:'warn',txt:`faltam ${d} dia${d>1?'s':''}`,d};
+  if(d>=60) return {k:'ok',txt:`faltam ~${Math.round(d/30)} meses`,d};
   return {k:'ok',txt:`faltam ${d} dias`,d};
 }
 function progresso(t){ // fração do intervalo já passada
@@ -265,14 +402,14 @@ function desfazer(t){
 /* =============== NAVEGAÇÃO =============== */
 let TAB='hoje', SEMANA_DIA=HOJE(), ROT_DIA=new Date().getDay();
 function go(t){TAB=t;document.querySelectorAll('.tab').forEach(e=>e.classList.toggle('on',e.id==='tab-'+t));document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.tab===t));window.scrollTo(0,0);render()}
-function fabClick(){ if(TAB==='rotina') editRotina(); else editTarefa(); }
+function fabClick(){ if(TAB==='rotina') editRotina(); else if(TAB==='projetos') editProjeto(); else editTarefa(); }
 
 /* =============== RENDER =============== */
 function render(){
   const d=new Date();
   document.getElementById('hdrDate').textContent=`${DIAS_L[d.getDay()]}, ${d.getDate()} de ${MESES[d.getMonth()]}`;
   document.getElementById('hdrTitle').textContent=S.nome||'Casa de Nazaré';
-  renderHoje(); renderSemana(); renderCasa(); renderRotina();
+  renderHoje(); renderSemana(); renderCasa(); renderRotina(); renderProjetos();
 }
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const CHECK='<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>';
@@ -284,7 +421,7 @@ function itemTarefa(t,opts={}){
     <button class="check ${done?'on':''}" onclick="${done?`desfazer(T('${t.id}'))`:`concluir(T('${t.id}'))`}" aria-label="Concluir">${CHECK}</button>
     <div class="grow" onclick="editTarefa('${t.id}')">
       <div class="t ${done?'done':''}">${esc(t.nome)}</div>
-      <div class="small">${esc(t.area)} · a cada ${t.intervalo} dias${t.quem?' · '+esc(t.quem):''}</div>
+      <div class="small">${esc(t.area)} · ${freqTxt(t.intervalo)}${t.quem?' · '+esc(t.quem):''}</div>
       ${opts.bar?`<div class="bar"><i class="${st.k}" style="width:${p}%"></i></div>`:''}
     </div>
     <div style="text-align:right;flex:none">
@@ -294,14 +431,19 @@ function itemTarefa(t,opts={}){
   </div>`;
 }
 function T(id){return S.tarefas.find(x=>x.id===id)}
+function P(id){return S.projetos.find(x=>x.id===id)}
+function freqTxt(i){return ({1:'todo dia',2:'dia sim, dia não',7:'toda semana',14:'a cada 2 semanas',15:'quinzenal',30:'todo mês',60:'a cada 2 meses',90:'a cada 3 meses',180:'a cada 6 meses',365:'uma vez por ano'})[i]||`a cada ${i} dias`}
 function toggleSemana(id){const t=T(id);t.semana=naSemana(t)?null:weekStart(HOJE());if(!naSemana(t))t.dia=null;save();render()}
 function toggleHoje(id){const t=T(id);const h=HOJE();t.dia=t.dia===h?null:h;if(t.dia){t.semana=weekStart(h)}save();render()}
 
 function renderHoje(){
   const h=HOJE();
   const pend=S.tarefas.filter(t=>deHoje(t)&&t.feitoHoje!==h).sort((a,b)=>status(a).d-status(b).d);
-  const feitas=S.tarefas.filter(t=>t.feitoHoje===h);
-  const total=pend.length+feitas.length, pct=total?feitas.length/total:0;
+  const feitasT=S.tarefas.filter(t=>t.feitoHoje===h);
+  const projP=S.projetos.filter(p=>p.dia&&p.dia<=h&&!p.feito), projF=S.projetos.filter(p=>p.feito===h);
+  const feitas={length:feitasT.length+projF.length};
+  const total=pend.length+projP.length+feitas.length, pct=total?feitas.length/total:0;
+  const nPend=pend.length+projP.length;
   const [q,a]=CITACOES[Math.floor(diffDays(h,'2026-01-01'))%CITACOES.length];
   const rot=rotinaDoDia(new Date().getDay());
   const agora=new Date().getHours()*60+new Date().getMinutes();
@@ -311,15 +453,16 @@ function renderHoje(){
     <div class="card peach"><div class="hero">
       <div class="ring"><svg viewBox="0 0 84 84"><circle cx="42" cy="42" r="34" stroke="#fff" stroke-width="9" fill="none"/><circle cx="42" cy="42" r="34" stroke="var(--teal)" stroke-width="9" fill="none" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C*(1-pct)}"/></svg><b>${feitas.length}/${total}</b></div>
       <div class="grow">
-        <h2>${total===0?'Nada pendente hoje':pend.length===0?'Tudo em dia!':`${pend.length} tarefa${pend.length>1?'s':''} para hoje`}</h2>
+        <h2>${total===0?'Nada pendente hoje':nPend===0?'Tudo em dia!':`${nPend} tarefa${nPend>1?'s':''} para hoje`}</h2>
         <p>${prox?`Agora na rotina: <b>${esc(prox.titulo)}</b> às ${prox.hora}`:'Rotina do dia concluída'}</p>
       </div>
     </div></div>
 
     <div class="sec"><h2>Para hoje</h2><span class="sub">${feitas.length} feita${feitas.length!==1?'s':''}</span></div>
     <div class="card">
-      ${pend.length?pend.map(t=>itemTarefa(t)).join(''):'<div class="empty">Nenhuma tarefa pendente para hoje.<br>Puxe uma da aba Semana ou toque em + para criar.</div>'}
-      ${feitas.length?feitas.map(t=>itemTarefa(t)).join(''):''}
+      ${projP.map(p=>itemProjeto(p)).join('')}
+      ${pend.length?pend.map(t=>itemTarefa(t)).join(''):(projP.length?'':'<div class="empty">Nenhuma tarefa pendente para hoje.<br>Puxe uma da aba Semana ou toque em + para criar.</div>')}
+      ${feitasT.map(t=>itemTarefa(t)).join('')}${projF.map(p=>itemProjeto(p)).join('')}
     </div>
 
     <div class="sec"><h2>Rotina de ${esc(S.criancas||"hoje")}</h2><span class="sub" onclick="go('rotina')">ver tudo</span></div>
@@ -338,30 +481,93 @@ function rotItem(r,agora){
 function renderSemana(){
   const h=HOJE(), ini=weekStart(h);
   const dias=[...Array(7)].map((_,i)=>addDays(ini,i));
-  const emSemana=S.tarefas.filter(naSemana);
+  const emSemana=S.tarefas.filter(t=>naSemana(t)&&t.feitoHoje!==h);
+  const projSem=S.projetos.filter(p=>p.semana===ini&&!p.feito);
   const semDia=emSemana.filter(t=>!t.dia);
-  const doDia=S.tarefas.filter(t=>t.dia===SEMANA_DIA);
-  const sugeridas=S.tarefas.filter(t=>!naSemana(t)&&status(t).d<=7&&t.feitoHoje!==h).sort((a,b)=>status(a).d-status(b).d);
+  const doDia=S.tarefas.filter(t=>t.dia===SEMANA_DIA), projDia=S.projetos.filter(p=>p.dia===SEMANA_DIA);
+  const sugeridas=S.tarefas.filter(t=>t.intervalo>3&&!naSemana(t)&&status(t).d<=7&&t.feitoHoje!==h).sort((a,b)=>status(a).d-status(b).d);
   const wd=fromIso(SEMANA_DIA).getDay();
   document.getElementById('tab-semana').innerHTML=`
-    <div class="days">${dias.map(d=>{const n=S.tarefas.filter(t=>t.dia===d).length;const dd=fromIso(d);return `<button class="day ${d===h?'today':''} ${d===SEMANA_DIA?'sel':''}" onclick="SEMANA_DIA='${d}';render()"><span>${DIAS[dd.getDay()]}</span><b>${dd.getDate()}</b><em>${n?n+' ✓':'&nbsp;'}</em></button>`}).join('')}</div>
+    <div class="days">${dias.map(d=>{const n=S.tarefas.filter(t=>t.dia===d).length+S.projetos.filter(p=>p.dia===d).length;const dd=fromIso(d);return `<button class="day ${d===h?'today':''} ${d===SEMANA_DIA?'sel':''}" onclick="SEMANA_DIA='${d}';render()"><span>${DIAS[dd.getDay()]}</span><b>${dd.getDate()}</b><em>${n?n+' ✓':'&nbsp;'}</em></button>`}).join('')}</div>
 
-    <div class="sec"><h2>${SEMANA_DIA===h?'Hoje, ':''}${DIAS_L[wd].split('-')[0]} ${fromIso(SEMANA_DIA).getDate()}</h2><span class="sub">${doDia.length} tarefa${doDia.length!==1?'s':''}</span></div>
-    <div class="card">${doDia.length?doDia.map(t=>itemTarefa(t)).join(''):'<div class="empty">Nenhuma tarefa marcada para este dia.<br>Escolha abaixo em qual dia cada tarefa da semana vai ser feita.</div>'}</div>
+    <div class="sec"><h2>${SEMANA_DIA===h?'Hoje, ':''}${DIAS_L[wd].split('-')[0]} ${fromIso(SEMANA_DIA).getDate()}</h2><span class="sub">${doDia.length+projDia.length} tarefa${doDia.length+projDia.length!==1?'s':''}</span></div>
+    <div class="card">${projDia.map(p=>itemProjeto(p)).join('')}${doDia.length||projDia.length?doDia.map(t=>itemTarefa(t)).join(''):'<div class="empty">Nenhuma tarefa marcada para este dia.<br>Escolha abaixo em qual dia cada tarefa da semana vai ser feita.</div>'}</div>
 
-    <div class="sec"><h2>Selecionadas para a semana</h2><span class="sub">${emSemana.length}</span></div>
+    <div class="sec"><h2>Selecionadas para a semana</h2><span class="sub">${emSemana.length+projSem.length}</span></div>
     <div class="card">
-      ${emSemana.length?emSemana.map(t=>`<div class="item" style="flex-wrap:wrap">
+      ${projSem.map(p=>`<div class="item" style="flex-wrap:wrap">
+        <div class="grow" onclick="editProjeto('${p.id}')"><div class="t">${esc(p.nome)}</div><div class="small">Projeto · ${esc(p.comodo)}</div></div>
+        <button class="mini off" onclick="toggleSemanaP('${p.id}')">tirar</button>
+        <div class="chips" style="width:100%;margin-top:8px">${dias.map(d=>`<button class="chip teal ${p.dia===d?'on':''}" onclick="setDiaP('${p.id}','${d}')">${fmtCurta(d)}</button>`).join('')}</div>
+      </div>`).join('')}
+      ${emSemana.length||projSem.length?emSemana.map(t=>`<div class="item" style="flex-wrap:wrap">
         <div class="grow" onclick="editTarefa('${t.id}')"><div class="t">${esc(t.nome)}</div><div class="small">${status(t).txt}</div></div>
         <button class="mini off" onclick="toggleSemana('${t.id}')">tirar</button>
         <div class="chips" style="width:100%;margin-top:8px">${dias.map(d=>`<button class="chip teal ${t.dia===d?'on':''}" onclick="setDia('${t.id}','${d}')">${fmtCurta(d)}</button>`).join('')}</div>
-      </div>`).join(''):'<div class="empty">Nada selecionado ainda. Puxe das sugestões abaixo ou da aba Casa.</div>'}
+      </div>`).join(''):'<div class="empty">Nada selecionado ainda. Puxe das sugestões abaixo, da aba Casa ou da aba Projetos.</div>'}
     </div>
 
     <div class="sec"><h2>Sugestões para a semana</h2><span class="sub">vencem em até 7 dias</span></div>
     <div class="card">${sugeridas.length?sugeridas.map(t=>itemTarefa(t,{semana:true})).join(''):'<div class="empty">Nenhuma tarefa vence nos próximos 7 dias.</div>'}</div>`;
 }
 function setDia(id,d){const t=T(id);t.dia=t.dia===d?null:d;t.semana=weekStart(HOJE());save();render()}
+
+/* =============== PROJETOS (coisas para fazer uma vez) =============== */
+function setDiaP(id,d){const p=P(id);p.dia=p.dia===d?null:d;p.semana=weekStart(HOJE());save();render()}
+function toggleSemanaP(id){const p=P(id),w=weekStart(HOJE());if(p.semana===w){p.semana=null;p.dia=null}else p.semana=w;save();render()}
+function toggleProjeto(id){const p=P(id);if(p.feito){p.feito=null}else{p.feito=HOJE();p.dia=null;p.semana=null;toast('Projeto concluído!')}save();render()}
+function itemProjeto(p,opts={}){
+  const w=weekStart(HOJE()), naSem=p.semana===w;
+  return `<div class="item">
+    <button class="check ${p.feito?'on':''}" onclick="toggleProjeto('${p.id}')" aria-label="Concluir">${CHECK}</button>
+    <div class="grow" onclick="editProjeto('${p.id}')">
+      <div class="t ${p.feito?'done':''}">${esc(p.nome)}</div>
+      <div class="small">${opts.semComodo?'':esc(p.comodo)+' · '}${p.feito?'feito '+fmtCurta(p.feito):'projeto'}</div>
+    </div>
+    <div style="text-align:right;flex:none">
+      ${p.prioridade&&!p.feito?'<span class="tag late">segurança</span>':''}
+      ${opts.semana&&!p.feito?`<div style="margin-top:6px"><button class="mini ${naSem?'':'off'}" onclick="toggleSemanaP('${p.id}')">${naSem?'na semana':'+ semana'}</button></div>`:''}
+    </div>
+  </div>`;
+}
+let PROJ_VER_FEITOS=false;
+function renderProjetos(){
+  const L=S.projetos||[], feitos=L.filter(p=>p.feito), abertos=L.filter(p=>!p.feito);
+  const seg=abertos.filter(p=>p.prioridade);
+  const pct=L.length?Math.round(feitos.length/L.length*100):0;
+  const grupos=[...COMODOS,...new Set(abertos.map(p=>p.comodo).filter(c=>!COMODOS.includes(c)))]
+    .map(c=>[c,abertos.filter(p=>!p.prioridade&&p.comodo===c)]).filter(([,a])=>a.length);
+  document.getElementById('tab-projetos').innerHTML=`
+    <div class="card peach">
+      <div class="row"><div class="grow"><h2 style="font-size:19px;font-weight:900">${abertos.length} projeto${abertos.length!==1?'s':''} em aberto</h2>
+      <p class="muted" style="margin:4px 0 0">Coisas para fazer uma vez só. Puxe para a semana e escolha o dia.</p></div>
+      <div class="count" style="text-align:right">${pct}%<small>concluído</small></div></div>
+      <div class="bar" style="background:#fff"><i style="width:${pct}%"></i></div>
+    </div>
+    ${seg.length?`<div class="sec"><h2>Segurança primeiro</h2><span class="sub">${seg.length}</span></div>
+    <div class="card pink">${seg.map(p=>itemProjeto(p,{semana:true})).join('')}</div>`:''}
+    ${grupos.map(([c,a])=>`<div class="sec"><h2>${esc(c)}</h2><span class="sub">${a.length}</span></div>
+    <div class="card">${a.map(p=>itemProjeto(p,{semana:true,semComodo:true})).join('')}</div>`).join('')}
+    ${!abertos.length?'<div class="card"><div class="empty">Nenhum projeto em aberto. Toque em + para criar.</div></div>':''}
+    ${feitos.length?`<div class="sec"><h2>Concluídos</h2><span class="sub" onclick="PROJ_VER_FEITOS=!PROJ_VER_FEITOS;render()">${PROJ_VER_FEITOS?'esconder':'ver '+feitos.length}</span></div>
+    ${PROJ_VER_FEITOS?`<div class="card">${feitos.sort((a,b)=>b.feito.localeCompare(a.feito)).map(p=>itemProjeto(p)).join('')}</div>`:''}`:''}`;
+}
+function editProjeto(id){
+  const p=id?P(id):{nome:'',comodo:COMODOS[0],prioridade:false};
+  const opts=[...new Set([...COMODOS,p.comodo])];
+  openSheet(`<h3>${id?'Editar projeto':'Novo projeto'}</h3>
+    <div class="f"><label>O que precisa ser feito</label><input id="pNome" value="${esc(p.nome)}" placeholder="Ex.: Pintar o portão"></div>
+    <div class="f"><label>Cômodo</label><select id="pCom">${opts.map(c=>`<option ${c===p.comodo?'selected':''}>${esc(c)}</option>`).join('')}</select></div>
+    <div class="f"><label>Prioridade</label><div class="chips"><button class="chip ${p.prioridade?'on':''}" id="pPri" onclick="this.classList.toggle('on')">É questão de segurança</button></div></div>
+    <div class="acts">${id?`<button class="btn danger" onclick="delProjeto('${id}')">Excluir</button>`:''}<button class="btn" onclick="saveProjeto('${id||''}')">Salvar</button></div>`);
+}
+function saveProjeto(id){
+  const nome=document.getElementById('pNome').value.trim(); if(!nome)return toast('Dê um nome para o projeto.');
+  const o={nome,comodo:document.getElementById('pCom').value,prioridade:document.getElementById('pPri').classList.contains('on')};
+  if(id)Object.assign(P(id),o); else S.projetos.push({id:uid(),feito:null,semana:null,dia:null,...o});
+  save();closeSheet();render();
+}
+function delProjeto(id){if(!confirm('Excluir este projeto?'))return;S.projetos=S.projetos.filter(p=>p.id!==id);save();closeSheet();render()}
 
 let CASA_AREA='Todas';
 function renderCasa(){
@@ -406,7 +612,7 @@ function editTarefa(id){
       <div><label>Responsável</label><select id="fQuem">${pess.map(p=>`<option value="${esc(p)}" ${p===t.quem?'selected':''}>${p||'Qualquer um'}</option>`).join('')}</select></div>
       <div><label>Última vez feita</label><input id="fUlt" type="date" value="${t.ultimaVez||''}"></div>
     </div></div>
-    <p class="small">Sem data de última vez, a tarefa já aparece como vencendo hoje.</p>
+    <p class="small">Use 1 para todo dia, 7 semanal, 15 quinzenal, 30 mensal, 90 trimestral, 180 semestral, 365 anual. Sem data de última vez, a tarefa já aparece como vencendo hoje.</p>
     <div class="acts">${id?`<button class="btn danger" onclick="delTarefa('${id}')">Excluir</button>`:''}<button class="btn" onclick="saveTarefa('${id||''}')">Salvar</button></div>`);
   setTimeout(()=>document.getElementById('fNome').focus(),250);
 }
